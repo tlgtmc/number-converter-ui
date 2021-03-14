@@ -13,24 +13,64 @@ export class AppComponent {
 
   constructor(private numberService: NumberServiceService) {}
 
-  inputTypes: string[] = ['DECIMAL', 'BINARY'];
+  inputTypes: string[];
+  outputTypes: string[];
 
-  apiRequest: ApiRequest = new ApiRequest('', 'DECIMAL', 'ROMAN');
+  apiRequest: ApiRequest = new ApiRequest();
   selectedInputType: string;
 
   numberValue: string;
 
   responseValue: ApiResponse = new ApiResponse('', '', 0);
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fetchInputTypes();
+    this.fetchOutputTypes();
+  }
+
+  fetchInputTypes() {
+    this.numberService.getInputTypes().subscribe(
+      (response) => {
+        console.log('Input types are fetched from back-end');
+        console.log(response);
+        this.inputTypes = response;
+      },
+      (error) => {
+        console.log(error);
+        this.inputTypes = ['DECIMAL', 'BINARY'];
+      }
+    );
+  }
+
+  fetchOutputTypes() {
+    this.numberService.getOutputTypes().subscribe(
+      (response) => {
+        console.log('Output types are fetched from back-end');
+        console.log(response);
+        this.outputTypes = response;
+      },
+      (error) => {
+        console.log(error);
+        this.outputTypes = ['ROMAN'];
+      }
+    );
+  }
 
   onInputTypeSelection(entry): void {
     this.apiRequest.inputNumberType = entry;
-    this.apiRequest.outputNumberType = 'ROMAN';
+    //this.apiRequest.outputNumberType = 'ROMAN';
+    console.log(this.apiRequest);
+  }
+
+  onOutputTypeSelection(entry): void {
+    this.apiRequest.outputNumberType = entry;
     console.log(this.apiRequest);
   }
 
   send() {
+    if (this.numberValue === '' && this.numberValue.length === 0) {
+      return;
+    }
     console.log(this.apiRequest);
     this.numberService.sendRequest(this.apiRequest).subscribe(
       (response) => {

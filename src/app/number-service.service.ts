@@ -10,13 +10,16 @@ import { isNullOrUndefined } from 'util';
   providedIn: 'root',
 })
 export class NumberServiceService {
-  private URL = 'http://localhost:7101/convert/to/roman';
+  private URL_HOST = 'http://localhost:7101';
+  private URL_CONVERSION = this.URL_HOST + '/convert/to/roman';
+  private URL_INPUT_TYPES = this.URL_HOST + '/config/inputTypes';
+  private URL_OUTPUT_TYPES = this.URL_HOST + '/config/outputTypes';
 
   constructor(private httpClient: HttpClient) {}
 
   sendRequest(apiRequest: ApiRequest): Observable<ApiResponse> {
     var url =
-      this.URL +
+      this.URL_CONVERSION +
       '?number=' +
       apiRequest.number +
       '&inputNumberType=' +
@@ -25,29 +28,12 @@ export class NumberServiceService {
       apiRequest.outputNumberType;
     return this.httpClient.get<ApiResponse>(url);
   }
-}
 
-export function toParamMap(...properties): HttpParams {
-  let httpParams = new HttpParams();
-  properties.forEach((p) => {
-    if (p) {
-      Object.keys(p).forEach((key) => {
-        if (!isNullOrUndefined(p[key]) && p[key] !== '') {
-          if (p[key] instanceof Date) {
-            httpParams = httpParams.set(key, p[key].toISOString());
-          } else if (p[key] instanceof Array) {
-            p[key].forEach((element) => {
-              if (element) {
-                httpParams = httpParams.append(key, element);
-              }
-            });
-          } else {
-            httpParams = httpParams.set(key, p[key]);
-          }
-        }
-      });
-    }
-  });
+  getInputTypes(): Observable<string[]> {
+    return this.httpClient.get<string[]>(this.URL_INPUT_TYPES);
+  }
 
-  return httpParams;
+  getOutputTypes(): Observable<string[]> {
+    return this.httpClient.get<string[]>(this.URL_OUTPUT_TYPES);
+  }
 }

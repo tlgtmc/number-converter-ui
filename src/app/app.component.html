@@ -334,7 +334,20 @@
         value="1"
         id="point1"
         (change)="onInputTypeSelection(type)"
-        name="ProfitCode"
+        name="InputType"
+      /><small>{{ type }}</small>
+    </label>
+  </div>
+
+  <h5>Select output type:</h5>
+  <div class="radio" *ngFor="let type of outputTypes">
+    <label>
+      <input
+        type="radio"
+        value="1"
+        id="point3"
+        (change)="onOutputTypeSelection(type)"
+        name="OutputType"
       /><small>{{ type }}</small>
     </label>
   </div>
@@ -346,7 +359,9 @@
     (click)="send()"
   />
 
-  <h3>Response is {{ responseValue.value }}</h3>
+  <h3 *ngIf="responseValue.value.length > 0">
+    Response is {{ responseValue.value }}
+  </h3>
 
   <svg
     id="clouds"
